@@ -18,7 +18,7 @@ use crate::generated::state::{
 ///
 /// Data:
 /// - name: [String] The name for the funding request
-/// - metadata_url: [String] URL pointing to data containing description, media, etc.
+/// - description: [String] type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
 pub fn create_funding_request(
@@ -26,12 +26,12 @@ pub fn create_funding_request(
 	beneficiary: &AccountInfo,
 	funding_request: &mut AccountPDA<FundingRequest>,
 	name: String,
-	metadata_url: String,
+	description: String,
 ) -> ProgramResult {
     // Set initial funding request state.
     funding_request.data.beneficiary = *beneficiary.key;
     funding_request.data.name = name;
-    funding_request.data.metadata_url = metadata_url;
+    funding_request.data.description = description;
 
     funding_request.data.target = 0;
     funding_request.data.total_raised = 0;

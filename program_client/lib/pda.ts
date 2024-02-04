@@ -23,7 +23,6 @@ export const deriveFundingRequestPDA = (
 };
 
 export type FundingRequestDonorSeeds = {
-    fundingRequest: PublicKey, 
     owner: PublicKey, 
     index: number, 
 };
@@ -35,7 +34,6 @@ export const deriveFundingRequestDonorPDA = (
     return PublicKey.findProgramAddressSync(
         [
             Buffer.from("funding_request_donor"),
-            seeds.fundingRequest.toBuffer(),
             seeds.owner.toBuffer(),
             Buffer.from(Uint16Array.from([seeds.index]).buffer),
         ],
@@ -44,7 +42,6 @@ export const deriveFundingRequestDonorPDA = (
 };
 
 export type MilestoneSeeds = {
-    fundingRequest: PublicKey, 
     index: number, 
 };
 
@@ -55,7 +52,6 @@ export const deriveMilestonePDA = (
     return PublicKey.findProgramAddressSync(
         [
             Buffer.from("milestone"),
-            seeds.fundingRequest.toBuffer(),
             Buffer.from(Uint16Array.from([seeds.index]).buffer),
         ],
         programId,
@@ -63,7 +59,6 @@ export const deriveMilestonePDA = (
 };
 
 export type MilestoneVoteSeeds = {
-    milestone: PublicKey, 
     voter: PublicKey, 
     index: number, 
 };
@@ -75,7 +70,6 @@ export const deriveMilestoneVotePDA = (
     return PublicKey.findProgramAddressSync(
         [
             Buffer.from("milestone_vote"),
-            seeds.milestone.toBuffer(),
             seeds.voter.toBuffer(),
             Buffer.from(Uint16Array.from([seeds.index]).buffer),
         ],

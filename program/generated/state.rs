@@ -39,12 +39,12 @@ pub struct FundingRequest {
 	pub name: String,
 	pub is_open: bool,
 	pub milestone_count: u16,
-	pub metadata_url: String,
+	pub description: String,
 	pub donor_count: u64,
 }
 
 impl FundingRequest {
-	pub const LEN: usize = 291; 
+	pub const LEN: usize = 495; 
 	}
 
 #[derive(BorshSerialize, BorshDeserialize, Debug, Clone, Default)]

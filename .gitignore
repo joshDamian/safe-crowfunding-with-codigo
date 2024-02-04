@@ -13,3 +13,5 @@ log-*.txt
 log-*/
 
 test-ledger/
+
+node_modules/

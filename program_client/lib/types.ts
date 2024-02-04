@@ -14,7 +14,7 @@ export interface FundingRequest {
   name: string;
   isOpen: boolean;
   milestoneCount: number;
-  metadataUrl: string;
+  description: string;
   donorCount: bigint;
 }
 
@@ -26,7 +26,7 @@ export const decodeFundingRequest = (decoded: Decoded): FundingRequest => ({
     name: decoded["name"] as string,
     isOpen: decoded["is_open"] as boolean,
     milestoneCount: decoded["milestone_count"] as number,
-    metadataUrl: decoded["metadata_url"] as string,
+    description: decoded["description"] as string,
     donorCount: decoded["donor_count"] as bigint,
 });
 
@@ -39,7 +39,7 @@ export const FundingRequestSchema: Schema =  {
         name: "string",
         is_open: "bool",
         milestone_count: "u16",
-        metadata_url: "string",
+        description: "string",
         donor_count: "u64",
     }
 };

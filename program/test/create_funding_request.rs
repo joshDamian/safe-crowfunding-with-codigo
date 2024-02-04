@@ -26,7 +26,7 @@ mod create_funding_request {
 		let rpc_client = test_validator.get_rpc_client();
 
 		let name: String = Default::default();
-		let metadata_url: String = Default::default();
+		let description: String = Default::default();
 		let funding_request_seed_beneficiary: Pubkey = Pubkey::new_unique();
 		let funding_request_seed_index: u16 = Default::default();
 
@@ -43,7 +43,7 @@ mod create_funding_request {
 		];
 		let data = SafeCrowdfundingInstruction::CreateFundingRequest(crate::generated::instructions::CreateFundingRequestArgs{
 			name,
-			metadata_url,
+			description,
 			funding_request_seed_beneficiary,
 			funding_request_seed_index,
 		});

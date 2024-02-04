@@ -41,11 +41,11 @@ types:
       - name: milestone_count
         type: u16
         description: counter used to set the level of milestones
-      - name: metadata_url
+      - name: description
         type: string
         solana:
-          attributes: [ cap:96 ]
-        description: URL pointing to data containing description, media, etc.
+          attributes: [ cap:300 ]
+        description: description for funding request.
       - name: donor_count
         type: u64
         description: Number of donors for the funding request
@@ -55,8 +55,6 @@ types:
     solana: 
       seeds:  
         - name: funding_request_donor
-        - name: funding_request
-          type: sol:pubkey
         - name: owner
           type: sol:pubkey
         - name: index
@@ -77,8 +75,6 @@ types:
     solana:
       seeds:
         - name: milestone
-        - name: funding_request
-          type: sol:pubkey
         - name: index
           type: u16
     fields:
@@ -120,8 +116,6 @@ types:
     solana:
       seeds:
         - name: milestone_vote
-        - name: milestone
-          type: sol:pubkey
         - name: voter
           type: sol:pubkey
         - name: index
@@ -163,9 +157,9 @@ methods:
         type: string
         description: The name for the funding request
 
-      - name: metadata_url
+      - name: description
         type: string
-        description: URL pointing to data containing description, media, etc.
+        description: description for funding request.
 
   - name: create_milestone
     summary: Create a new milestone.
@@ -188,8 +182,6 @@ methods:
         type: Milestone
         solana:
           attributes: [ mut, init ]
-          seeds:
-            funding_request: funding_request
 
       - name: name
         type: string
@@ -239,7 +231,7 @@ methods:
           attributes: [ mut ]
 
       - name: previous_milestone
-        type: Milestone
+        type: Milestone       
 
       - name: funding_request
         type: FundingRequest
@@ -250,7 +242,6 @@ methods:
         type: Milestone
         solana:
           attributes: [ mut ]
-
 
   - name: withdraw_from_milestone
     summary: Withdraw funds for a particular milestone
@@ -273,6 +264,9 @@ methods:
 
       - name: funding_request
         type: FundingRequest
+        solana:
+          seeds:
+            beneficiary: withdrawer
 
       - name: amount
         type: u64
@@ -304,8 +298,6 @@ methods:
         type: MilestoneVote
         solana:
           attributes: [ mut, init ]
-          seeds:
-            milestone: milestone
 
       - name: confidence
         type: bool
@@ -331,8 +323,6 @@ methods:
         type: FundingRequestDonor
         solana:
           attributes: [ mut, init ]
-          seeds:
-            funding_request: funding_request
  
   - name: donate_to_funding_request
     summary: Donate to a funding request.

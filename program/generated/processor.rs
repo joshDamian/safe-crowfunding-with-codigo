@@ -43,7 +43,7 @@ impl Processor {
 					program_id,
 					accounts, 
 					args.name,
-					args.metadata_url,
+					args.description,
 					args.funding_request_seed_beneficiary,
 					args.funding_request_seed_index,
 				)
@@ -67,7 +67,6 @@ impl Processor {
 					program_id,
 					accounts, 
 					args.deliverable_url,
-					args.milestone_seed_funding_request,
 					args.milestone_seed_index,
 					args.funding_request_seed_beneficiary,
 					args.funding_request_seed_index,
@@ -78,11 +77,9 @@ impl Processor {
 				Self::process_unlock_milestone(
 					program_id,
 					accounts, 
-					args.previous_milestone_seed_funding_request,
 					args.previous_milestone_seed_index,
 					args.funding_request_seed_beneficiary,
 					args.funding_request_seed_index,
-					args.milestone_seed_funding_request,
 					args.milestone_seed_index,
 				)
 			}
@@ -92,9 +89,7 @@ impl Processor {
 					program_id,
 					accounts, 
 					args.amount,
-					args.milestone_seed_funding_request,
 					args.milestone_seed_index,
-					args.funding_request_seed_beneficiary,
 					args.funding_request_seed_index,
 				)
 			}
@@ -104,10 +99,8 @@ impl Processor {
 					program_id,
 					accounts, 
 					args.confidence,
-					args.donor_account_seed_funding_request,
 					args.donor_account_seed_owner,
 					args.donor_account_seed_index,
-					args.milestone_seed_funding_request,
 					args.milestone_seed_index,
 					args.milestone_vote_seed_voter,
 					args.milestone_vote_seed_index,
@@ -130,7 +123,6 @@ impl Processor {
 					program_id,
 					accounts, 
 					args.amount,
-					args.donor_seed_funding_request,
 					args.donor_seed_owner,
 					args.donor_seed_index,
 					args.funding_request_seed_beneficiary,
@@ -150,14 +142,14 @@ impl Processor {
 ///
 /// Data:
 /// - name: [String] The name for the funding request
-/// - metadata_url: [String] URL pointing to data containing description, media, etc.
+/// - description: [String] type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
 	pub fn process_create_funding_request(
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
 		name: String,
-		metadata_url: String,
+		description: String,
 		funding_request_seed_beneficiary: Pubkey,
 		funding_request_seed_index: u16,
 	) -> ProgramResult {
@@ -232,7 +224,7 @@ impl Processor {
 			beneficiary_info,
 			funding_request,
 			name,
-			metadata_url,
+			description,
 		)?;
 
 		// Accounts Serialization
@@ -280,7 +272,7 @@ impl Processor {
 			program_id,
 		);
 		let (milestone_pubkey, milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", funding_request_info.key.as_ref(), milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 
@@ -320,7 +312,7 @@ impl Processor {
 				program_id,
 			),
 			&[fee_payer_info.clone(), milestone_info.clone()],
-			&[&[b"milestone", funding_request_info.key.as_ref(), milestone_seed_index.to_le_bytes().as_ref(), &[milestone_bump]]],
+			&[&[b"milestone", milestone_seed_index.to_le_bytes().as_ref(), &[milestone_bump]]],
 		)?;
 
 
@@ -377,7 +369,6 @@ impl Processor {
 ///
 /// Data:
 /// - deliverable_url: [String] URL pointing to what was delivered
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
@@ -385,7 +376,6 @@ impl Processor {
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
 		deliverable_url: String,
-		milestone_seed_funding_request: Pubkey,
 		milestone_seed_index: u16,
 		funding_request_seed_beneficiary: Pubkey,
 		funding_request_seed_index: u16,
@@ -398,7 +388,7 @@ impl Processor {
 
 		// Derive PDAs
 		let (milestone_pubkey, milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", milestone_seed_funding_request.as_ref(), milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (funding_request_pubkey, funding_request_bump) = Pubkey::find_program_address(
@@ -476,20 +466,16 @@ impl Processor {
 /// 4. `[writable]` milestone: [Milestone] 
 ///
 /// Data:
-/// - previous_milestone_seed_funding_request: [Pubkey] Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - previous_milestone_seed_index: [u16] Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 	pub fn process_unlock_milestone(
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
-		previous_milestone_seed_funding_request: Pubkey,
 		previous_milestone_seed_index: u16,
 		funding_request_seed_beneficiary: Pubkey,
 		funding_request_seed_index: u16,
-		milestone_seed_funding_request: Pubkey,
 		milestone_seed_index: u16,
 	) -> ProgramResult {
 		let account_info_iter = &mut accounts.iter();
@@ -501,7 +487,7 @@ impl Processor {
 
 		// Derive PDAs
 		let (previous_milestone_pubkey, previous_milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", previous_milestone_seed_funding_request.as_ref(), previous_milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", previous_milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (funding_request_pubkey, funding_request_bump) = Pubkey::find_program_address(
@@ -509,7 +495,7 @@ impl Processor {
 			program_id,
 		);
 		let (milestone_pubkey, milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", milestone_seed_funding_request.as_ref(), milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 
@@ -596,17 +582,13 @@ impl Processor {
 ///
 /// Data:
 /// - amount: [u64] Amount to withdraw
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
-/// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
 	pub fn process_withdraw_from_milestone(
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
 		amount: u64,
-		milestone_seed_funding_request: Pubkey,
 		milestone_seed_index: u16,
-		funding_request_seed_beneficiary: Pubkey,
 		funding_request_seed_index: u16,
 	) -> ProgramResult {
 		let account_info_iter = &mut accounts.iter();
@@ -617,11 +599,11 @@ impl Processor {
 
 		// Derive PDAs
 		let (milestone_pubkey, milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", milestone_seed_funding_request.as_ref(), milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (funding_request_pubkey, funding_request_bump) = Pubkey::find_program_address(
-			&[b"funding_request", funding_request_seed_beneficiary.as_ref(), funding_request_seed_index.to_le_bytes().as_ref()],
+			&[b"funding_request", withdrawer_info.key.as_ref(), funding_request_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 
@@ -697,10 +679,8 @@ impl Processor {
 ///
 /// Data:
 /// - confidence: [bool] A bool representing the confidence of the vote
-/// - donor_account_seed_funding_request: [Pubkey] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named funding_request, required by the type
 /// - donor_account_seed_owner: [Pubkey] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named owner, required by the type
 /// - donor_account_seed_index: [u16] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named index, required by the type
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 /// - milestone_vote_seed_voter: [Pubkey] Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named voter, required by the type
 /// - milestone_vote_seed_index: [u16] Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named index, required by the type
@@ -708,10 +688,8 @@ impl Processor {
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
 		confidence: bool,
-		donor_account_seed_funding_request: Pubkey,
 		donor_account_seed_owner: Pubkey,
 		donor_account_seed_index: u16,
-		milestone_seed_funding_request: Pubkey,
 		milestone_seed_index: u16,
 		milestone_vote_seed_voter: Pubkey,
 		milestone_vote_seed_index: u16,
@@ -726,15 +704,15 @@ impl Processor {
 
 		// Derive PDAs
 		let (donor_account_pubkey, donor_account_bump) = Pubkey::find_program_address(
-			&[b"funding_request_donor", donor_account_seed_funding_request.as_ref(), donor_account_seed_owner.as_ref(), donor_account_seed_index.to_le_bytes().as_ref()],
+			&[b"funding_request_donor", donor_account_seed_owner.as_ref(), donor_account_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (milestone_pubkey, milestone_bump) = Pubkey::find_program_address(
-			&[b"milestone", milestone_seed_funding_request.as_ref(), milestone_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone", milestone_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (milestone_vote_pubkey, milestone_vote_bump) = Pubkey::find_program_address(
-			&[b"milestone_vote", milestone_info.key.as_ref(), milestone_vote_seed_voter.as_ref(), milestone_vote_seed_index.to_le_bytes().as_ref()],
+			&[b"milestone_vote", milestone_vote_seed_voter.as_ref(), milestone_vote_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 
@@ -778,7 +756,7 @@ impl Processor {
 				program_id,
 			),
 			&[fee_payer_info.clone(), milestone_vote_info.clone()],
-			&[&[b"milestone_vote", milestone_info.key.as_ref(), milestone_vote_seed_voter.as_ref(), milestone_vote_seed_index.to_le_bytes().as_ref(), &[milestone_vote_bump]]],
+			&[&[b"milestone_vote", milestone_vote_seed_voter.as_ref(), milestone_vote_seed_index.to_le_bytes().as_ref(), &[milestone_vote_bump]]],
 		)?;
 
 
@@ -868,7 +846,7 @@ impl Processor {
 			program_id,
 		);
 		let (donor_pubkey, donor_bump) = Pubkey::find_program_address(
-			&[b"funding_request_donor", funding_request_info.key.as_ref(), donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref()],
+			&[b"funding_request_donor", donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 
@@ -908,7 +886,7 @@ impl Processor {
 				program_id,
 			),
 			&[fee_payer_info.clone(), donor_info.clone()],
-			&[&[b"funding_request_donor", funding_request_info.key.as_ref(), donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref(), &[donor_bump]]],
+			&[&[b"funding_request_donor", donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref(), &[donor_bump]]],
 		)?;
 
 
@@ -962,7 +940,6 @@ impl Processor {
 ///
 /// Data:
 /// - amount: [u64] The amount to donate
-/// - donor_seed_funding_request: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
 /// - donor_seed_owner: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
 /// - donor_seed_index: [u16] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
@@ -971,7 +948,6 @@ impl Processor {
 		program_id: &Pubkey,
 		accounts: &[AccountInfo],
 		amount: u64,
-		donor_seed_funding_request: Pubkey,
 		donor_seed_owner: Pubkey,
 		donor_seed_index: u16,
 		funding_request_seed_beneficiary: Pubkey,
@@ -985,7 +961,7 @@ impl Processor {
 
 		// Derive PDAs
 		let (donor_pubkey, donor_bump) = Pubkey::find_program_address(
-			&[b"funding_request_donor", donor_seed_funding_request.as_ref(), donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref()],
+			&[b"funding_request_donor", donor_seed_owner.as_ref(), donor_seed_index.to_le_bytes().as_ref()],
 			program_id,
 		);
 		let (funding_request_pubkey, funding_request_bump) = Pubkey::find_program_address(

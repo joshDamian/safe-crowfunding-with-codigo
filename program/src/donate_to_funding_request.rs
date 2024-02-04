@@ -19,7 +19,6 @@ use crate::generated::{state::{
 ///
 /// Data:
 /// - amount: [u64] The amount to donate
-/// - donor_seed_funding_request: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
 /// - donor_seed_owner: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
 /// - donor_seed_index: [u16] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type

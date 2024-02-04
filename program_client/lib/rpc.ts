@@ -41,7 +41,7 @@ export enum SafeCrowdfundingInstruction {
  *
  * Data:
  * - name: {@link string} The name for the funding request
- * - metadata_url: {@link string} URL pointing to data containing description, media, etc.
+ * - description: {@link string} type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
@@ -78,7 +78,6 @@ export enum SafeCrowdfundingInstruction {
  *
  * Data:
  * - deliverable_url: {@link string} URL pointing to what was delivered
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
@@ -96,11 +95,9 @@ export enum SafeCrowdfundingInstruction {
  * 4. `[writable]` milestone: {@link Milestone} 
  *
  * Data:
- * - previous_milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
  * - previous_milestone_seed_index: {@link number} Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  */
     UnlockMilestone = 3,
@@ -116,9 +113,7 @@ export enum SafeCrowdfundingInstruction {
  *
  * Data:
  * - amount: {@link BigInt} Amount to withdraw
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
- * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
     WithdrawFromMilestone = 4,
@@ -136,10 +131,8 @@ export enum SafeCrowdfundingInstruction {
  *
  * Data:
  * - confidence: {@link boolean} A bool representing the confidence of the vote
- * - donor_account_seed_funding_request: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_account_seed_owner: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_account_seed_index: {@link number} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - milestone_vote_seed_voter: {@link PublicKey} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named voter, required by the type
  * - milestone_vote_seed_index: {@link number} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named index, required by the type
@@ -175,7 +168,6 @@ export enum SafeCrowdfundingInstruction {
  *
  * Data:
  * - amount: {@link BigInt} The amount to donate
- * - donor_seed_funding_request: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_seed_owner: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_seed_index: {@link number} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
@@ -188,7 +180,7 @@ export type CreateFundingRequestArgs = {
     feePayer: PublicKey;
     beneficiary: PublicKey;
     name: string;
-    metadataUrl: string;
+    description: string;
     fundingRequestSeedBeneficiary: PublicKey;
     fundingRequestSeedIndex: number;
 };
@@ -206,7 +198,7 @@ export type CreateFundingRequestArgs = {
  *
  * Data:
  * - name: {@link string} The name for the funding request
- * - metadata_url: {@link string} URL pointing to data containing description, media, etc.
+ * - description: {@link string} type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
@@ -216,7 +208,7 @@ export const createFundingRequest = (args: CreateFundingRequestArgs): Transactio
             struct: {
                 id: "u8",
                 name: "string",
-                metadata_url: "string",
+                description: "string",
                 funding_request_seed_beneficiary: { array: { type: "u8", len: 32 } },
                 funding_request_seed_index: "u16",
             },
@@ -224,7 +216,7 @@ export const createFundingRequest = (args: CreateFundingRequestArgs): Transactio
         {
             id: SafeCrowdfundingInstruction.CreateFundingRequest,
             name: args.name,
-            metadata_url: args.metadataUrl,
+            description: args.description,
             funding_request_seed_beneficiary: args.fundingRequestSeedBeneficiary.toBytes(),
             funding_request_seed_index: args.fundingRequestSeedIndex,
         }
@@ -259,7 +251,7 @@ export const createFundingRequest = (args: CreateFundingRequestArgs): Transactio
  *
  * Data:
  * - name: {@link string} The name for the funding request
- * - metadata_url: {@link string} URL pointing to data containing description, media, etc.
+ * - description: {@link string} type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
@@ -344,7 +336,6 @@ export const createMilestone = (args: CreateMilestoneArgs): TransactionInstructi
         index: args.fundingRequestSeedIndex,
     }, _programId);
     const [milestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.fundingRequest,
         index: args.milestoneSeedIndex,
     }, _programId);
 
@@ -405,7 +396,6 @@ export type UpdateMilestoneDeliverableArgs = {
     feePayer: PublicKey;
     updater: PublicKey;
     deliverableUrl: string;
-    milestoneSeedFundingRequest: PublicKey;
     milestoneSeedIndex: number;
     fundingRequestSeedBeneficiary: PublicKey;
     fundingRequestSeedIndex: number;
@@ -424,7 +414,6 @@ export type UpdateMilestoneDeliverableArgs = {
  *
  * Data:
  * - deliverable_url: {@link string} URL pointing to what was delivered
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
@@ -435,7 +424,6 @@ export const updateMilestoneDeliverable = (args: UpdateMilestoneDeliverableArgs)
             struct: {
                 id: "u8",
                 deliverable_url: "string",
-                milestone_seed_funding_request: { array: { type: "u8", len: 32 } },
                 milestone_seed_index: "u16",
                 funding_request_seed_beneficiary: { array: { type: "u8", len: 32 } },
                 funding_request_seed_index: "u16",
@@ -444,7 +432,6 @@ export const updateMilestoneDeliverable = (args: UpdateMilestoneDeliverableArgs)
         {
             id: SafeCrowdfundingInstruction.UpdateMilestoneDeliverable,
             deliverable_url: args.deliverableUrl,
-            milestone_seed_funding_request: args.milestoneSeedFundingRequest.toBytes(),
             milestone_seed_index: args.milestoneSeedIndex,
             funding_request_seed_beneficiary: args.fundingRequestSeedBeneficiary.toBytes(),
             funding_request_seed_index: args.fundingRequestSeedIndex,
@@ -452,7 +439,6 @@ export const updateMilestoneDeliverable = (args: UpdateMilestoneDeliverableArgs)
     );
 
     const [milestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.milestoneSeedFundingRequest,
         index: args.milestoneSeedIndex,
     }, _programId);
     const [fundingRequestPubkey] = pda.deriveFundingRequestPDA({
@@ -484,7 +470,6 @@ export const updateMilestoneDeliverable = (args: UpdateMilestoneDeliverableArgs)
  *
  * Data:
  * - deliverable_url: {@link string} URL pointing to what was delivered
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
@@ -513,11 +498,9 @@ export const updateMilestoneDeliverableSendAndConfirm = async (
 export type UnlockMilestoneArgs = {
     feePayer: PublicKey;
     unlocker: PublicKey;
-    previousMilestoneSeedFundingRequest: PublicKey;
     previousMilestoneSeedIndex: number;
     fundingRequestSeedBeneficiary: PublicKey;
     fundingRequestSeedIndex: number;
-    milestoneSeedFundingRequest: PublicKey;
     milestoneSeedIndex: number;
 };
 
@@ -534,11 +517,9 @@ export type UnlockMilestoneArgs = {
  * 4. `[writable]` milestone: {@link Milestone} 
  *
  * Data:
- * - previous_milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
  * - previous_milestone_seed_index: {@link number} Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  */
 export const unlockMilestone = (args: UnlockMilestoneArgs): TransactionInstruction => {
@@ -546,27 +527,22 @@ export const unlockMilestone = (args: UnlockMilestoneArgs): TransactionInstructi
         {
             struct: {
                 id: "u8",
-                previous_milestone_seed_funding_request: { array: { type: "u8", len: 32 } },
                 previous_milestone_seed_index: "u16",
                 funding_request_seed_beneficiary: { array: { type: "u8", len: 32 } },
                 funding_request_seed_index: "u16",
-                milestone_seed_funding_request: { array: { type: "u8", len: 32 } },
                 milestone_seed_index: "u16",
             },
         },
         {
             id: SafeCrowdfundingInstruction.UnlockMilestone,
-            previous_milestone_seed_funding_request: args.previousMilestoneSeedFundingRequest.toBytes(),
             previous_milestone_seed_index: args.previousMilestoneSeedIndex,
             funding_request_seed_beneficiary: args.fundingRequestSeedBeneficiary.toBytes(),
             funding_request_seed_index: args.fundingRequestSeedIndex,
-            milestone_seed_funding_request: args.milestoneSeedFundingRequest.toBytes(),
             milestone_seed_index: args.milestoneSeedIndex,
         }
     );
 
     const [previousMilestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.previousMilestoneSeedFundingRequest,
         index: args.previousMilestoneSeedIndex,
     }, _programId);
     const [fundingRequestPubkey] = pda.deriveFundingRequestPDA({
@@ -574,7 +550,6 @@ export const unlockMilestone = (args: UnlockMilestoneArgs): TransactionInstructi
         index: args.fundingRequestSeedIndex,
     }, _programId);
     const [milestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.milestoneSeedFundingRequest,
         index: args.milestoneSeedIndex,
     }, _programId);
 
@@ -603,11 +578,9 @@ export const unlockMilestone = (args: UnlockMilestoneArgs): TransactionInstructi
  * 4. `[writable]` milestone: {@link Milestone} 
  *
  * Data:
- * - previous_milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
  * - previous_milestone_seed_index: {@link number} Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  */
 export const unlockMilestoneSendAndConfirm = async (
@@ -635,9 +608,7 @@ export type WithdrawFromMilestoneArgs = {
     feePayer: PublicKey;
     withdrawer: PublicKey;
     amount: bigint;
-    milestoneSeedFundingRequest: PublicKey;
     milestoneSeedIndex: number;
-    fundingRequestSeedBeneficiary: PublicKey;
     fundingRequestSeedIndex: number;
 };
 
@@ -654,9 +625,7 @@ export type WithdrawFromMilestoneArgs = {
  *
  * Data:
  * - amount: {@link BigInt} Amount to withdraw
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
- * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
 export const withdrawFromMilestone = (args: WithdrawFromMilestoneArgs): TransactionInstruction => {
@@ -665,28 +634,23 @@ export const withdrawFromMilestone = (args: WithdrawFromMilestoneArgs): Transact
             struct: {
                 id: "u8",
                 amount: "u64",
-                milestone_seed_funding_request: { array: { type: "u8", len: 32 } },
                 milestone_seed_index: "u16",
-                funding_request_seed_beneficiary: { array: { type: "u8", len: 32 } },
                 funding_request_seed_index: "u16",
             },
         },
         {
             id: SafeCrowdfundingInstruction.WithdrawFromMilestone,
             amount: args.amount,
-            milestone_seed_funding_request: args.milestoneSeedFundingRequest.toBytes(),
             milestone_seed_index: args.milestoneSeedIndex,
-            funding_request_seed_beneficiary: args.fundingRequestSeedBeneficiary.toBytes(),
             funding_request_seed_index: args.fundingRequestSeedIndex,
         }
     );
 
     const [milestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.milestoneSeedFundingRequest,
         index: args.milestoneSeedIndex,
     }, _programId);
     const [fundingRequestPubkey] = pda.deriveFundingRequestPDA({
-        beneficiary: args.fundingRequestSeedBeneficiary,
+        beneficiary: args.withdrawer,
         index: args.fundingRequestSeedIndex,
     }, _programId);
 
@@ -714,9 +678,7 @@ export const withdrawFromMilestone = (args: WithdrawFromMilestoneArgs): Transact
  *
  * Data:
  * - amount: {@link BigInt} Amount to withdraw
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
- * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
  * - funding_request_seed_index: {@link number} Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
  */
 export const withdrawFromMilestoneSendAndConfirm = async (
@@ -744,10 +706,8 @@ export type VoteOnMilestoneArgs = {
     feePayer: PublicKey;
     voter: PublicKey;
     confidence: boolean;
-    donorAccountSeedFundingRequest: PublicKey;
     donorAccountSeedOwner: PublicKey;
     donorAccountSeedIndex: number;
-    milestoneSeedFundingRequest: PublicKey;
     milestoneSeedIndex: number;
     milestoneVoteSeedVoter: PublicKey;
     milestoneVoteSeedIndex: number;
@@ -768,10 +728,8 @@ export type VoteOnMilestoneArgs = {
  *
  * Data:
  * - confidence: {@link boolean} A bool representing the confidence of the vote
- * - donor_account_seed_funding_request: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_account_seed_owner: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_account_seed_index: {@link number} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - milestone_vote_seed_voter: {@link PublicKey} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named voter, required by the type
  * - milestone_vote_seed_index: {@link number} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named index, required by the type
@@ -782,10 +740,8 @@ export const voteOnMilestone = (args: VoteOnMilestoneArgs): TransactionInstructi
             struct: {
                 id: "u8",
                 confidence: "bool",
-                donor_account_seed_funding_request: { array: { type: "u8", len: 32 } },
                 donor_account_seed_owner: { array: { type: "u8", len: 32 } },
                 donor_account_seed_index: "u16",
-                milestone_seed_funding_request: { array: { type: "u8", len: 32 } },
                 milestone_seed_index: "u16",
                 milestone_vote_seed_voter: { array: { type: "u8", len: 32 } },
                 milestone_vote_seed_index: "u16",
@@ -794,10 +750,8 @@ export const voteOnMilestone = (args: VoteOnMilestoneArgs): TransactionInstructi
         {
             id: SafeCrowdfundingInstruction.VoteOnMilestone,
             confidence: args.confidence,
-            donor_account_seed_funding_request: args.donorAccountSeedFundingRequest.toBytes(),
             donor_account_seed_owner: args.donorAccountSeedOwner.toBytes(),
             donor_account_seed_index: args.donorAccountSeedIndex,
-            milestone_seed_funding_request: args.milestoneSeedFundingRequest.toBytes(),
             milestone_seed_index: args.milestoneSeedIndex,
             milestone_vote_seed_voter: args.milestoneVoteSeedVoter.toBytes(),
             milestone_vote_seed_index: args.milestoneVoteSeedIndex,
@@ -805,16 +759,13 @@ export const voteOnMilestone = (args: VoteOnMilestoneArgs): TransactionInstructi
     );
 
     const [donorAccountPubkey] = pda.deriveFundingRequestDonorPDA({
-        fundingRequest: args.donorAccountSeedFundingRequest,
         owner: args.donorAccountSeedOwner,
         index: args.donorAccountSeedIndex,
     }, _programId);
     const [milestonePubkey] = pda.deriveMilestonePDA({
-        fundingRequest: args.milestoneSeedFundingRequest,
         index: args.milestoneSeedIndex,
     }, _programId);
     const [milestoneVotePubkey] = pda.deriveMilestoneVotePDA({
-        milestone: args.milestone,
         voter: args.milestoneVoteSeedVoter,
         index: args.milestoneVoteSeedIndex,
     }, _programId);
@@ -847,10 +798,8 @@ export const voteOnMilestone = (args: VoteOnMilestoneArgs): TransactionInstructi
  *
  * Data:
  * - confidence: {@link boolean} A bool representing the confidence of the vote
- * - donor_account_seed_funding_request: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_account_seed_owner: {@link PublicKey} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_account_seed_index: {@link number} Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named index, required by the type
- * - milestone_seed_funding_request: {@link PublicKey} Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
  * - milestone_seed_index: {@link number} Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
  * - milestone_vote_seed_voter: {@link PublicKey} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named voter, required by the type
  * - milestone_vote_seed_index: {@link number} Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named index, required by the type
@@ -928,7 +877,6 @@ export const createDonorAccount = (args: CreateDonorAccountArgs): TransactionIns
         index: args.fundingRequestSeedIndex,
     }, _programId);
     const [donorPubkey] = pda.deriveFundingRequestDonorPDA({
-        fundingRequest: args.fundingRequest,
         owner: args.donorSeedOwner,
         index: args.donorSeedIndex,
     }, _programId);
@@ -988,7 +936,6 @@ export type DonateToFundingRequestArgs = {
     feePayer: PublicKey;
     owner: PublicKey;
     amount: bigint;
-    donorSeedFundingRequest: PublicKey;
     donorSeedOwner: PublicKey;
     donorSeedIndex: number;
     fundingRequestSeedBeneficiary: PublicKey;
@@ -1008,7 +955,6 @@ export type DonateToFundingRequestArgs = {
  *
  * Data:
  * - amount: {@link BigInt} The amount to donate
- * - donor_seed_funding_request: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_seed_owner: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_seed_index: {@link number} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
@@ -1020,7 +966,6 @@ export const donateToFundingRequest = (args: DonateToFundingRequestArgs): Transa
             struct: {
                 id: "u8",
                 amount: "u64",
-                donor_seed_funding_request: { array: { type: "u8", len: 32 } },
                 donor_seed_owner: { array: { type: "u8", len: 32 } },
                 donor_seed_index: "u16",
                 funding_request_seed_beneficiary: { array: { type: "u8", len: 32 } },
@@ -1030,7 +975,6 @@ export const donateToFundingRequest = (args: DonateToFundingRequestArgs): Transa
         {
             id: SafeCrowdfundingInstruction.DonateToFundingRequest,
             amount: args.amount,
-            donor_seed_funding_request: args.donorSeedFundingRequest.toBytes(),
             donor_seed_owner: args.donorSeedOwner.toBytes(),
             donor_seed_index: args.donorSeedIndex,
             funding_request_seed_beneficiary: args.fundingRequestSeedBeneficiary.toBytes(),
@@ -1039,7 +983,6 @@ export const donateToFundingRequest = (args: DonateToFundingRequestArgs): Transa
     );
 
     const [donorPubkey] = pda.deriveFundingRequestDonorPDA({
-        fundingRequest: args.donorSeedFundingRequest,
         owner: args.donorSeedOwner,
         index: args.donorSeedIndex,
     }, _programId);
@@ -1072,7 +1015,6 @@ export const donateToFundingRequest = (args: DonateToFundingRequestArgs): Transa
  *
  * Data:
  * - amount: {@link BigInt} The amount to donate
- * - donor_seed_funding_request: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
  * - donor_seed_owner: {@link PublicKey} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
  * - donor_seed_index: {@link number} Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
  * - funding_request_seed_beneficiary: {@link PublicKey} Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type

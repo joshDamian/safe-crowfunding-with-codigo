@@ -19,11 +19,9 @@ use crate::generated::{state::{
 /// 4. `[writable]` milestone: [Milestone] 
 ///
 /// Data:
-/// - previous_milestone_seed_funding_request: [Pubkey] Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - previous_milestone_seed_index: [u16] Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 pub fn unlock_milestone(
 	program_id: &Pubkey,

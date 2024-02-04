@@ -18,7 +18,7 @@ pub enum SafeCrowdfundingInstruction {
 ///
 /// Data:
 /// - name: [String] The name for the funding request
-/// - metadata_url: [String] URL pointing to data containing description, media, etc.
+/// - description: [String] type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
 	CreateFundingRequest(CreateFundingRequestArgs),
@@ -51,7 +51,6 @@ pub enum SafeCrowdfundingInstruction {
 ///
 /// Data:
 /// - deliverable_url: [String] URL pointing to what was delivered
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
@@ -67,11 +66,9 @@ pub enum SafeCrowdfundingInstruction {
 /// 4. `[writable]` milestone: [Milestone] 
 ///
 /// Data:
-/// - previous_milestone_seed_funding_request: [Pubkey] Auto-generated, from input previous_milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - previous_milestone_seed_index: [u16] Auto-generated, from input previous_milestone of type [Milestone] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 	UnlockMilestone(UnlockMilestoneArgs),
 
@@ -85,9 +82,7 @@ pub enum SafeCrowdfundingInstruction {
 ///
 /// Data:
 /// - amount: [u64] Amount to withdraw
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
-/// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
 /// - funding_request_seed_index: [u16] Auto-generated, from input funding_request of type [FundingRequest] set the seed named index, required by the type
 	WithdrawFromMilestone(WithdrawFromMilestoneArgs),
 
@@ -103,10 +98,8 @@ pub enum SafeCrowdfundingInstruction {
 ///
 /// Data:
 /// - confidence: [bool] A bool representing the confidence of the vote
-/// - donor_account_seed_funding_request: [Pubkey] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named funding_request, required by the type
 /// - donor_account_seed_owner: [Pubkey] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named owner, required by the type
 /// - donor_account_seed_index: [u16] Auto-generated, from input donor_account of type [FundingRequestDonor] set the seed named index, required by the type
-/// - milestone_seed_funding_request: [Pubkey] Auto-generated, from input milestone of type [Milestone] set the seed named funding_request, required by the type
 /// - milestone_seed_index: [u16] Auto-generated, from input milestone of type [Milestone] set the seed named index, required by the type
 /// - milestone_vote_seed_voter: [Pubkey] Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named voter, required by the type
 /// - milestone_vote_seed_index: [u16] Auto-generated, from input milestone_vote of type [MilestoneVote] set the seed named index, required by the type
@@ -138,7 +131,6 @@ pub enum SafeCrowdfundingInstruction {
 ///
 /// Data:
 /// - amount: [u64] The amount to donate
-/// - donor_seed_funding_request: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named funding_request, required by the type
 /// - donor_seed_owner: [Pubkey] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named owner, required by the type
 /// - donor_seed_index: [u16] Auto-generated, from input donor of type [FundingRequestDonor] set the seed named index, required by the type
 /// - funding_request_seed_beneficiary: [Pubkey] Auto-generated, from input funding_request of type [FundingRequest] set the seed named beneficiary, required by the type
@@ -150,7 +142,7 @@ pub enum SafeCrowdfundingInstruction {
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct CreateFundingRequestArgs {
 	pub name: String,
-	pub metadata_url: String,
+	pub description: String,
 	pub funding_request_seed_beneficiary: Pubkey,
 	pub funding_request_seed_index: u16,
 }
@@ -168,7 +160,6 @@ pub struct CreateMilestoneArgs {
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct UpdateMilestoneDeliverableArgs {
 	pub deliverable_url: String,
-	pub milestone_seed_funding_request: Pubkey,
 	pub milestone_seed_index: u16,
 	pub funding_request_seed_beneficiary: Pubkey,
 	pub funding_request_seed_index: u16,
@@ -176,30 +167,24 @@ pub struct UpdateMilestoneDeliverableArgs {
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct UnlockMilestoneArgs {
-	pub previous_milestone_seed_funding_request: Pubkey,
 	pub previous_milestone_seed_index: u16,
 	pub funding_request_seed_beneficiary: Pubkey,
 	pub funding_request_seed_index: u16,
-	pub milestone_seed_funding_request: Pubkey,
 	pub milestone_seed_index: u16,
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct WithdrawFromMilestoneArgs {
 	pub amount: u64,
-	pub milestone_seed_funding_request: Pubkey,
 	pub milestone_seed_index: u16,
-	pub funding_request_seed_beneficiary: Pubkey,
 	pub funding_request_seed_index: u16,
 }
 
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct VoteOnMilestoneArgs {
 	pub confidence: bool,
-	pub donor_account_seed_funding_request: Pubkey,
 	pub donor_account_seed_owner: Pubkey,
 	pub donor_account_seed_index: u16,
-	pub milestone_seed_funding_request: Pubkey,
 	pub milestone_seed_index: u16,
 	pub milestone_vote_seed_voter: Pubkey,
 	pub milestone_vote_seed_index: u16,
@@ -216,7 +201,6 @@ pub struct CreateDonorAccountArgs {
 #[derive(BorshSerialize, BorshDeserialize, Debug)]
 pub struct DonateToFundingRequestArgs {
 	pub amount: u64,
-	pub donor_seed_funding_request: Pubkey,
 	pub donor_seed_owner: Pubkey,
 	pub donor_seed_index: u16,
 	pub funding_request_seed_beneficiary: Pubkey,
