@@ -12,4 +12,4 @@ target/
 log-*.txt
 log-*/
 
-/test-ledger/
+test-ledger/
