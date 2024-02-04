@@ -1,0 +1,14 @@
+target/
+
+**/*.rs.bk
+.cargo
+
+/config/
+
+.cache
+
+# log files
+*.log
+log-*.txt
+log-*/
+

@@ -1,0 +1,362 @@
+cidl: "0.8"
+info:
+  name: safe_crowdfunding
+  title: Safe Crowdfunding
+  summary: |-
+    A community-based crowdfunding platform that promotes accountability for donors.
+  version: 0.1.0
+  license:
+    name: MIT
+    identifier: MIT
+types:
+  FundingRequest:
+    solana:
+      seeds:
+        - name: funding_request
+        - name: beneficiary
+          type: sol:pubkey
+        - name: index
+          type: u16
+    fields:
+      - name: beneficiary
+        type: sol:pubkey
+        description: The creator of the funding request
+      - name: target
+        type: u128
+        description: The total amount of funds the beneficiary aims to raise
+      - name: total_raised
+        type: u128
+        description: The total amount raised for the funding request
+      - name: available_capital
+        type: u128
+        description: The current amount available for spending
+      - name: name
+        type: string
+        description: The name for the funding request
+        solana:
+          attributes: [ cap:96 ]
+      - name: is_open
+        type: bool
+        description: Tracks if the funding request still accepts donations.
+      - name: milestone_count
+        type: u16
+        description: counter used to set the level of milestones
+      - name: metadata_url
+        type: string
+        solana:
+          attributes: [ cap:96 ]
+        description: URL pointing to data containing description, media, etc.
+      - name: donor_count
+        type: u64
+        description: Number of donors for the funding request
+
+
+  FundingRequestDonor:
+    solana: 
+      seeds:  
+        - name: funding_request_donor
+        - name: funding_request
+          type: sol:pubkey
+        - name: owner
+          type: sol:pubkey
+        - name: index
+          type: u16
+
+    fields: 
+      - name: owner
+        type: sol:pubkey
+        description: Owner of the donor account
+      - name: amount_donated
+        type: u128
+        description: Amount donated to funding request
+      - name: funding_request
+        type: sol:pubkey
+        description: Funding request donor account is created for
+
+  Milestone:
+    solana:
+      seeds:
+        - name: milestone
+        - name: funding_request
+          type: sol:pubkey
+        - name: index
+          type: u16
+    fields:
+      - name: name
+        type: string
+        description: The name for the milestone
+        solana:
+          attributes: [ cap:96 ]
+      - name: positive_votes
+        type: u128
+        description: Count of positive votes the milestone has gotten
+      - name: negative_votes
+        type: u128
+        description: Count of negative votes the milestone has gotten
+      - name: target_amount
+        type: u128
+        description: Fund allocated for the milestone
+      - name: expectation
+        type: string
+        description: A short explainer on what to expect
+        solana:
+          attributes: [ cap:255 ]
+      - name: deliverable_url
+        type: string
+        description: URL pointing to what was delivered
+        solana:
+          attributes: [ cap:96 ]
+      - name: funding_request
+        type: sol:pubkey
+        description: Account of the funding request that owns the milestone
+      - name: level
+        type: u16
+        description: Order in which the milestone is
+      - name: is_unlocked
+        type: bool
+        description: Tracks if milestone is unlocked
+
+  MilestoneVote:
+    solana:
+      seeds:
+        - name: milestone_vote
+        - name: milestone
+          type: sol:pubkey
+        - name: voter
+          type: sol:pubkey
+        - name: index
+          type: u16
+    fields:
+      - name: milestone
+        type: sol:pubkey
+        description: Account of the milestone being voted on
+      - name: voter
+        type: sol:pubkey
+        description: The account placing the vote
+      - name: confidence
+        type: bool
+        description: A bool representing the confidence of the vote
+      - name: voted
+        type: bool
+  
+methods:
+  - name: create_funding_request
+    summary: Create a new funding request.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: beneficiary
+    
+    inputs:
+      - name: beneficiary
+        type: sol:account_info
+        description: Account that has permission to update the funding request
+        solana:
+          attributes: [ mut ]
+
+      - name: funding_request
+        type: FundingRequest
+        solana:
+          attributes: [ init ]
+
+      - name: name
+        type: string
+        description: The name for the funding request
+
+      - name: metadata_url
+        type: string
+        description: URL pointing to data containing description, media, etc.
+
+  - name: create_milestone
+    summary: Create a new milestone.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: creator
+
+    inputs:
+      - name: creator
+        type: sol:account_info
+        description: Account that has permission to create milestone
+
+      - name: funding_request
+        type: FundingRequest
+        solana:
+          attributes: [ mut ]
+
+      - name: milestone
+        type: Milestone
+        solana:
+          attributes: [ mut, init ]
+          seeds:
+            funding_request: funding_request
+
+      - name: name
+        type: string
+        description: The name for the milestone
+
+      - name: target_amount
+        type: u64
+        description: The amount required to complete the milestone
+
+      - name: expectation
+        type: string
+        description: A short explainer on what to expect
+
+  - name: update_milestone_deliverable
+    summary: Update an existing milestone with deliverable URL.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: updater
+    inputs:
+      - name: updater
+        type: sol:account_info
+
+      - name: milestone
+        type: Milestone
+        solana:
+          attributes: [ mut ]
+      
+      - name: funding_request
+        type: FundingRequest
+
+      - name: deliverable_url
+        type: string
+        description: URL pointing to what was delivered
+
+  - name: unlock_milestone
+    summary: Unlock allocated funds for milestone.
+    solana: 
+       signers:
+        - name: fee_payer
+        - name: unlocker
+
+    inputs:
+      - name: unlocker
+        type: sol:account_info
+        solana:
+          attributes: [ mut ]
+
+      - name: previous_milestone
+        type: Milestone
+
+      - name: funding_request
+        type: FundingRequest
+        solana:
+          attributes: [ mut ]
+
+      - name: milestone
+        type: Milestone
+        solana:
+          attributes: [ mut ]
+
+
+  - name: withdraw_from_milestone
+    summary: Withdraw funds for a particular milestone
+
+    solana: 
+      signers:
+      - name: fee_payer
+      - name: withdrawer
+
+    inputs:
+      - name: withdrawer
+        type: sol:account_info
+        solana:
+          attributes: [ mut ]
+
+      - name: milestone
+        type: Milestone
+        solana:
+          attributes: [ mut ]
+
+      - name: funding_request
+        type: FundingRequest
+
+      - name: amount
+        type: u64
+        description: Amount to withdraw
+
+  - name: vote_on_milestone
+    summary: Vote on a milestone.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: voter
+    inputs:
+      - name: voter
+        type: sol:account_info
+        solana:
+          attributes: [ mut ]
+      
+      - name: donor_account
+        type: FundingRequestDonor
+        solana:
+          attributes: [ mut ]
+
+      - name: milestone
+        type: Milestone
+        solana:
+          attributes: [ mut ]
+
+      - name: milestone_vote
+        type: MilestoneVote
+        solana:
+          attributes: [ mut, init ]
+          seeds:
+            milestone: milestone
+
+      - name: confidence
+        type: bool
+        description: A bool representing the confidence of the vote
+
+  - name: create_donor_account
+    summary: create a donor account for donating to a funding request.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: owner
+
+    inputs: 
+      - name: owner
+        type: sol:account_info
+        solana:
+          attributes: [ mut ]
+
+      - name: funding_request
+        type: FundingRequest
+
+      - name: donor
+        type: FundingRequestDonor
+        solana:
+          attributes: [ mut, init ]
+          seeds:
+            funding_request: funding_request
+ 
+  - name: donate_to_funding_request
+    summary: Donate to a funding request.
+    solana:
+      signers:
+        - name: fee_payer
+        - name: owner
+
+    inputs:
+      - name: owner
+        type: sol:account_info
+        solana:
+          attributes: [ mut ]
+
+      - name: donor
+        type: FundingRequestDonor
+        solana:
+          attributes: [ mut ]
+
+      - name: funding_request
+        type: FundingRequest
+        solana:
+          attributes: [ mut ]
+
+      - name: amount
+        type: u64
+        description: The amount to donate
